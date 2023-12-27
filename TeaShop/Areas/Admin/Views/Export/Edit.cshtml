@@ -1,0 +1,230 @@
+﻿@model IEnumerable<TeaShop.Models.EntityFramework.ExportDetail>
+@{
+    ViewBag.Title = "Xuất";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+@section naviheader
+{
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/Admin" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/Admin/import" class="nav-link">Phiếu xuất</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="#" class="nav-link">Thêm mới</a>
+        </li>
+    </ul>
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Thêm mới Phiếu xuất</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/Admin/import">Danh sách Phiếu xuất</a></li>
+                    <li class="breadcrumb-item active">Xuất</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Xuất kho</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @using (Html.BeginForm("Add", "Export", FormMethod.Post, new { }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+
+                    if (Model != null && Model.Any())
+                    {
+                        int i = 1;
+                        <table class="table table-bExported">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn vị</th>
+                                    <th>Mã lô hàng</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dtBody">
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@item.Product.Title</td>
+                                        <td>@item.Quantity</td>
+                                        <td>@item.Unit.Name</td>
+                                        <td id="pack_@item.Id" data-id="@item.Id">
+                                            
+                                            
+
+                                        </td>
+                                    </tr>
+                                    i++;
+                                }
+                            </tbody>
+                        </table>
+                    }
+                }
+            </div>
+            <div class="fixed-botombutton mt-2">
+                <div class="action_Save">
+                    <div class="text-danger text-gradient text-sm font-weight-bold" id="textShowMessageMaster"></div>
+                    <div class="action_Save-Content">
+
+                        <button id="btnSaveDetail" style="" form="form3" type="button" class="btn bg-gradient-primary mt-2 me-2" onclick="return WareHouse_SaveDetail()">@(ViewBag.IsExport == 1 ? "Hủy xuất" : "Xuất")</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>
+<!-- /.content -->
+
+@section scripts
+{
+    <script>
+        var dataPro = {}
+        var dataUnit = {}
+        var dataExport = {}
+        var dataPack = []
+        var isExport = Number("@ViewBag.IsExport");
+        $(document).ready(function () {
+
+            dataPro = JSON.parse(htmlDecode("@ViewBag.JsonProducts"))
+            dataUnit = JSON.parse(htmlDecode("@ViewBag.JsonUnit"))
+            dataExport = JSON.parse(htmlDecode("@ViewBag.JSonDetails"))
+            dataPack = JSON.parse(htmlDecode("@ViewBag.JSonPack"))
+
+
+            dataPro = dataPro.reduce((pre, arr) => { pre[arr.ID] = arr; return pre }, {});
+            dataUnit = dataUnit.reduce((pre, arr) => { pre[arr.ID] = arr; return pre }, {});
+            dataExport = dataExport.reduce((pre, arr) => { pre[arr.ID] = arr; return pre }, {});
+
+
+            $('.auto').autoNumeric('init');
+            renderData();
+
+        });
+
+        function renderData() {
+            let data = Object.values(dataExport);
+
+            for (let i = 0; i < data.length; i++) {
+                let item = data[i];
+
+                $('#pack_' + item.ID).html(renderOpt(item.ProductID))
+            }
+            $(".pack").on("change", function (e) {
+                e.preventDefault();
+                let pack = $(this).find('option:selected').text();
+                let id = $(this).closest('td').attr('data-id');
+                dataExport[id].PackageNumber = pack;
+            });
+        }
+
+        function renderOpt(id) {
+            let tr = ''
+            for (let i = 0; i < dataPack.length; i++) {
+                let item = dataPack[i];
+
+                if (item.ProductID == id) {
+                    tr += `<option value="${item.Id}">${item.Name}</option>`
+                }
+
+            }
+            tr = `<select id="issueinput6" class="form-control pack" data-toggle="tooltip" data-trigger="hover" data-placement="top"
+                                                    data-title="Status">
+                                                    ${tr}
+
+                                            </select>`;
+            return tr;
+        }
+
+        function htmlDecode(input) {
+            var doc = new DOMParser().parseFromString(input, "text/html");
+            return doc.documentElement.textContent;
+        }
+        function WareHouse_SaveDetail() {
+            let data = Object.values(dataExport);
+            let isInvalid = 0;
+            $('#textShowMessageMaster').html();
+            let dataDetail =[]
+;            for (let i = 0; i < data.length; i++) {
+                let item = data[i];
+                let pacl = $('#pack_' + item.ID).find('option:selected').text();
+                if (typeof pacl == "undefined" || pacl == "") isInvalid = 1
+
+                let e = {
+                    Id : item.ID,
+                    ProductId : item.ProductID,
+                    UnitID : 0,
+                    Quantity : item.Quantity,
+                    ExportId: item.ExportId,
+                    PackageNumber: pacl
+                }
+               
+                dataDetail.push(e);
+            }
+            debugger
+            if (isInvalid == 0) {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("Edit", "Export")',
+                    data: {
+                        details: dataDetail,
+                        __RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                    },
+                    contentType: 'application/x-www-form-urlencoded',
+                    async: true,
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                    },
+                    success: function (result) {
+                        window.location.href = '@Url.Action("Index", "Export")';
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    complete: function (e) {
+
+                    }
+                });
+            }
+            else {
+                $('#textShowMessageMaster').html("Chưa chọn lô hàng");
+            }
+        }
+    </script>
+}
+

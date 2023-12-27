@@ -1,0 +1,86 @@
+﻿@model IEnumerable<TeaShop.Models.ShoppingCartItem>
+@using TeaShop.Common
+
+@if (Model != null && Model.Any())
+{
+    <style>
+    </style>
+    <h3>Đơn hàng <span style="float:right;position:relative"></span></h3>
+    var i = 0;
+    var tongtien = decimal.Zero;
+    <div style="border:1px solid #808080;">
+        <table class="table">
+            <tr>
+                <th>Sản Phẩm</th>
+                <th>Giá Tiền </th>
+                <th>Số lượng</th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                tongtien += item.TotalPrice;
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@Common.FormatNumber(item.Price, 0)</td>
+                    <td align="center">@item.Quantity</td>
+                </tr>
+            }
+        </table>
+        <div class="row">
+            <div style="text-align:end;" class="col-8">Tổng tiền: </div>
+            <div class="col-3">@Common.FormatNumber(tongtien, 0)</div>
+        </div>
+    </div>
+
+    <div style="margin-top:20px;" class="form-group">
+        <label style="font-size:18px" for="selectPaymentOption">Hình thức thanh toán</label>
+        <select id="selectPaymentOption" class="form-control" name="TypePayment">
+            <option value="1" selected>Thanh toán khi nhận hàng</option>
+            <option value="2">Chuyển khoản ngân hàng</option>
+            <option value="3">Momo wallet</option>
+        </select>
+    </div>
+   
+    <div id="loadingContent" class="text-center mt-4">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <p style="color:black; text-align:center;" id="contentCOD" >Thanh toán khi giao hàng (COD): bạn sẽ chỉ thanh toán tiền khi nhân viên giao hàng của chúng tôi giao hàng cho bạn</p>
+    <div id="selectedValueContent" class="mt-4 content-loaded" style="text-align:center; display: none;">
+      
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#selectPaymentOption').change(function () {
+                var selectedValue = $(this).val();
+                var loadingIcon = $('#loadingContent');
+                var contentElement = $('#selectedValueContent');
+                var contentCod = $('#contentCOD');
+
+                contentCod.css('display', 'none');
+
+                loadingIcon.show();
+                
+
+                setTimeout(function () {
+                    loadingIcon.addClass('rotate');
+                }, 100);
+
+                setTimeout(function () {
+                    loadingIcon.hide().removeClass('rotate');
+                    if (selectedValue === '1') {
+                        contentElement.html('Thanh toán khi giao hàng (COD): bạn sẽ chỉ thanh toán tiền khi nhân viên giao hàng của chúng tôi giao hàng cho bạn').fadeIn(200);
+                    } else if (selectedValue === '2') {
+                        contentElement.html('Bạn sẽ thanh toán tiền trước cho chúng tôi bằng cách gửi tiền vào thông tin tài khoản đính kèm bên dưới. Nhân viên chúng tôi sẽ gọi để xác nhận với bạn <img src="/Uploads/images/banking.jpg" width="380" height="auto" >').fadeIn(100);
+                    } else if (selectedValue === '3') {
+                        contentElement.html('Bạn sẽ thanh toán tiền trước cho chúng tôi bằng cách gửi tiền vào thông tin tài khoản đính kèm bên dưới. Nhân viên chúng tôi sẽ gọi để xác nhận với bạn <img src="/Uploads/images/momo.jpg" width="380" height="auto" >').fadeIn(100);
+                    }
+                }, 500);
+            });
+        });
+    </script>
+}
+else
+{
+
+}

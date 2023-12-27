@@ -1,0 +1,35 @@
+﻿@model IEnumerable<TeaShop.Models.EntityFramework.ImportDetail>
+@if(Model != null && Model.Any())
+{
+    int i = 1;
+    <table class="table table-bExported">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Tên sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá nhập</th>
+                <th>Đơn vị</th>
+                <th>Nhà cung cấp</th>
+                <th>Mã lô hàng</th>
+                <th>Ngày hết hạn</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@item.Product.Title</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price</td>
+                    <td>@item.Unit.Name</td>
+                    <td>@item.Supplier.Name</td>
+                    <td>@item.PackageNumber</td>
+                    <td>@(item.DateExpired != null ? item.DateExpired.Value.ToString("dd/MM/yyyy") : "")</td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+}

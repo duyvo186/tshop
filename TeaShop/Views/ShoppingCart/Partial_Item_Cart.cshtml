@@ -1,0 +1,102 @@
+﻿@model IEnumerable<TeaShop.Models.ShoppingCartItem>
+@using TeaShop.Common
+<table id="myTable" class="table" style="font-size:19px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">
+    <tr class="text-center">
+        <th>STT</th>
+        <th>Ảnh sản phẩm</th>
+        <th>Tên sản phẩm</th>
+        <th>Danh mục</th>
+        <th>Giá</th>
+
+        <th style="width:150px;">Số lượng</th>
+        <th>Thành tiền</th>
+        <th style="width:200px;">
+
+        </th>
+    </tr>
+    @if (Model != null && Model.Any())
+    {
+        var i = 0;
+        var tongtien = decimal.Zero;
+        foreach (var item in Model)
+        {
+            tongtien += item.TotalPrice;
+            <tr class="text-center" id="trow_@item.ProductId">
+                <td>@(i+1)</td>
+                <td><img src="@item.ProductImg" width="60" /></td>
+                <td>
+                    <a href="/chi-tiet/@item.Alias-p@(item.ProductId)">
+                        @item.ProductName
+                    </a>
+                </td>
+                <td>@item.CategoryName</td>
+                <td id="Price_@item.ProductId">@Common.FormatNumber(item.Price, 0)</td>
+                <td><input type="number" class="form-control" id="Quantity_@item.ProductId" value="@item.Quantity" /></td>
+                <th id="Price_Display_@item.ProductId">@Common.FormatNumber(item.TotalPrice, 2)</th>
+                <td>
+                    <a href="#" data-id="@item.ProductId" class="btn btn-sm btn-danger btnDelete">Xóa</a>
+                </td>
+            </tr>
+            i++;
+        }
+        <tr>
+            <th colspan="6" class="text-right">Tổng: </th>
+            <th class="text-center">@Common.FormatNumber(tongtien, 0)</th>
+            <th></th>
+        </tr>
+
+    }
+    else
+    {
+        <tr>
+            <th colspan="7">Không có sản phẩm trong giỏ hàng!!</th>
+        </tr>
+    }
+</table>
+
+<script>
+$(document).ready(function () {
+
+      // Get the table by its ID
+    const table = document.getElementById('myTable');
+
+    // Attach 'input' event listener to the table
+    table.addEventListener('input', function(event) {
+  // Check if the input that triggered the event is of type 'number'
+  if (event.target && event.target.type === 'number') {
+    // Get the product ID from the input's ID attribute
+    const productId = event.target.id.split('_')[1];
+
+    // Get the quantity value
+    const quantity = parseFloat(event.target.value);
+
+    // Get the price element corresponding to the product ID
+      const priceElement = document.getElementById(`Price_${productId}`);
+
+
+      // Get the price element corresponding to the product ID
+      const priceDisplayElement = document.getElementById(`Price_Display_${productId}`);
+
+    // Get the initial price value and remove commas if present
+    const initialPrice = parseFloat(priceElement.textContent.replace(/,/g, ''));
+
+    // Update the price cell with the new calculated price
+      priceDisplayElement.textContent = (initialPrice * quantity).toLocaleString(); // Add commas back for display
+      Update(productId, quantity);
+      function Update(id, quantity) {
+          $.ajax({
+              url: '/shoppingcart/Update',
+              type: 'POST',
+              data: { id: id, quantity: quantity },
+              success: function (rs) {
+                  if (rs.Success) {
+                      LoadCart();
+                  }
+              }
+          });
+      }
+  }
+});
+});
+
+</script>

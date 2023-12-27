@@ -1,0 +1,130 @@
+﻿@{
+    ViewBag.Title = "Thanh toán";
+}
+
+
+<style>
+    .error 
+    {
+        color: red;
+    }
+    .main_nav_container
+    {
+        display:none;
+    }
+    .top_nav {
+        display:none;
+    }
+    .main_nav_container
+    {
+        margin-top:0px !important;
+    }
+    .product_section_container {
+        margin-top: 30px !important;
+    }
+</style>
+
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/categories_styles.css">
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/categories_responsive.css">
+<div class="container product_section_container">
+    <div class="row">
+        <div class="col product_section clearfix">
+
+            <!-- Breadcrumbs -->
+            <!-- Sidebar -->
+            <!-- Main Content -->
+            @*<div class="row">
+
+                <div class="col-md-12 text-center">
+                    <h1 class="">Thanh toán</h1>
+                    <p>Bạn hãy kiểm tra lại thông tin đơn hàng cho chính xác!</p>
+                </div>
+
+            </div>*@
+            <hr />
+            @using (Ajax.BeginForm("CheckOut", "Shoppingcart", new AjaxOptions
+            {
+                HttpMethod = "POST",
+                UpdateTargetId = "load_data",
+                OnComplete = "OnSuccessCO",
+                OnFailure = "OnFailure",
+
+            }, new { @Id = "myForm" }))
+            {
+
+                <script>
+                    function OnSuccessCO() {
+                        location.href = "/ShoppingCart/CheckOutSuccess";
+                    }
+                    function OnFailure() {
+
+                    }
+                </script>
+                @Html.AntiForgeryToken()
+
+                if (ViewBag.CheckCart != null)
+                {
+
+                    <div class="row">
+                        <div id="show_success"></div>
+                        <div class="col-md-7">
+                            @Html.Action("Partial_CheckOut", "Shoppingcart")
+                        </div>
+                        <div class="col-md-5">
+                            @Html.Action("Partial_Item_ThanhToan", "ShoppingCart")
+
+                        </div>
+                        <div style="text-align:center" class="col-md-12">
+                            <div class="form-group">
+                                <a href="/gio-hang" style=" display: inline-block; margin: 5px;" class="btn btn-secondary">Quay lại giỏ hàng</a>
+                                <button style=" display: inline-block; margin: 5px;" type="submit" class="btn btn-success">Đặt hàng</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        Bạn chưa có sản phẩm nào. Vui lòng quay lại trang <a href="/san-pham">sản phẩm</a> để mua hàng.
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Content/assets/js/categories_custom.js"></script>
+    <script>
+        function OnFailure(rs) {
+            if (!rs.Success) {
+                $('#show_success').html("Bạn mua hàng thất bại! Xin vui lòng thử lại");
+            }
+        }
+        $(document).ready(function () {
+            $('#myForm').validate({
+                rules: {
+                    'CustomerName': {
+                        required: true
+                    },
+                    'Phone': {
+                        required: true
+                    },
+                    'Address': {
+                        required: true
+                    },
+                    'Email': {
+                        required: true,
+                        email: true
+                    }
+                },
+                messages: {
+                    'CustomerName': 'Bạn không được để trống họ tên.',
+                    'Phone': 'Bạn không được để trống số điện thoại.',
+                    'Address': 'Bạn không được để trống địa chỉ.',
+                    'Email': 'Email chưa hợp lệ'
+                }
+            });
+        });
+    </script>
+}

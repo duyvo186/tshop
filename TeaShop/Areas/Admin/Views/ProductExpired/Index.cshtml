@@ -1,0 +1,272 @@
+﻿@model PagedList.PagedList<TeaShop.Models.EntityFramework.Product>
+@using PagedList.Mvc;
+@using PagedList;
+@using System.Globalization;
+@{
+    ViewBag.Title = "Danh sách hsd sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section naviheader
+{
+<script src="~/Content/assets/js/table2excel.js"></script>
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/home" class="nav-link" style="font-size:18px">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/Admin/products" class="nav-link" style="font-size:18px">@ViewBag.Title</a>
+        </li>
+    </ul>
+}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h3>Quản lý sản phẩm theo hsd</h3>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item" style="font-size:17px"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active" style="font-size:17px">@ViewBag.Title</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title" style="font-size:25px"> @ViewBag.Title</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    @using (Html.BeginForm("Index", "ProductExpired", FormMethod.Get, new { }))
+                    {
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            @Html.TextBox("SearchText")
+                            <span class="input-group-text">HSD</span>
+                            <select class="form-control valid h-auto" name="numDay" aria-invalid="false">
+                                <option value="31">1 Tháng</option>
+                                <option value="90">3 Tháng</option>
+                                <option value="180" selected="">6 Tháng</option>
+                                <option value="365">12 Tháng</option>
+                            </select>
+                            <span class="input-group-append">
+                                <button type="submit" class="btn btn-info btn-flat">Tìm kiếm</button>
+                            </span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <table class="table table-hover" id="example-table">
+                <thead>
+                    <tr style="font-size:20px">
+                        <th><input type="checkbox" id="SelectAll" /></th>
+                        <th>STT</th>
+                        <th>Hình ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Số lượng</th>
+                        <th>Đơn vị</th>
+                        <th>Giá</th>
+                        <th>Hạn sử dụng</th>
+                        <th>Ngày tạo</th>
+                        <th>Sale</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        var i = ((ViewBag.Page - 1) * ViewBag.PageSize) + 1;
+                        foreach (var item in Model)
+                        {
+                            var strCheck = item.IsActive ? "<i class='fa fa-check text-success'></i>" : "<i class='fas fa-times text-danger'></i>";
+                            var strCheckHome = item.IsHome ? "<i class='fa fa-check text-success'></i>" : "<i class='fas fa-times text-danger'></i>";
+
+                            CultureInfo cul = CultureInfo.GetCultureInfo("vi-VN");   // try with "en-US"
+                            string pri = item.PriceSale != null ?  double.Parse(item.PriceSale.ToString()).ToString("#,###", cul.NumberFormat).Replace('.', ',') : "0";
+                            var strChecSale = item.IsSale ? "Sale " + pri : "Sale";
+                            var strImg = "";
+                            var CheckImage = item.ProductImage.FirstOrDefault(x => x.IsDefault);
+                            if (CheckImage != null)
+                            {
+                                strImg = CheckImage.Image;
+                            }
+                            <tr id="trow_@item.Id">
+                                <td><input type="checkbox" class="cbkItem" value="@item.Id" /></td>
+                                <td>@i</td>
+                                <td><img class="imgproduct" data-id="@item.Id" src="@strImg" width="80" /></td>
+                                <td>@item.Title</td>
+                                <td>@item.ProductCategory.Title</td>
+                                <td>@item.Quanlity</td>
+                                <td>@item.Unit.Name</td>
+                                <td>@TeaShop.Common.Common.FormatNumber(item.Price, 0)</td>
+                                <td>@(item.DateExpired != null ? item.DateExpired.Value.ToString("dd/MM/yyyy") : "")</td>
+                                <td>@item.CreatedDate.ToString("dd/MM/yyyy")</td>
+                                <td class="text-center">
+                                    <a href="#" id="btnSale_@item.Id" data-id="@item.Id" data-price="@item.PriceSale" class="btnSale">@Html.Raw(strChecSale)</a>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">Không có bản ghi nào!!!</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+
+            <div class="row">
+                <div class="col-6"></div>
+                <div class="col-6" style="text-align:right">
+                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+                </div>
+            </div>
+            <div style="text-align: right; margin-right: 7px;">
+                <button id="downloadexecl"> Tải xuống Excel</button>
+            </div>
+            <script>
+                document.getElementById('downloadexecl').addEventListener('click', function () {
+                    var table2excel = new Table2Excel();
+                    table2excel.export(document.querySelectorAll("#example-table"));
+
+                });
+            </script>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>
+<!-- /.content -->
+<div id="dialog">
+    <iframe id="myIframe" style="border: 0; width: 100%; height: 100%;"></iframe>
+</div>
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Cập nhật trạng thái</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="txtProId" value="0" />
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Giá khuyến mãi</label>
+                    <input type="text" name="demoPriceSale" id="demoPriceSale" value="0" class="form-control auto">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary btnLuu">Lưu</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+@section scripts{
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <script>
+        $(document).ready(function () {
+            //hiển thị form upload ảnh
+            $("#dialog").dialog({
+                autoOpen: false,
+                show: "fade",
+                hide: "fade",
+                modal: true,
+                height: '600',
+                width: '700',
+                resizable: true,
+                title: 'Quản lý ảnh sản phẩm',
+                close: function () {
+                    window.location.reload();
+                }
+            });
+            $('body').on("click", ".imgproduct", function () {
+                var proid = $(this).attr("data-id");
+                $("#dialog #myIframe").attr("src", "/admin/ProductImage/Index?id=" + proid);
+                $('#dialog').dialog('open');
+                return false;
+            });
+
+
+
+
+            $('body').on('click', '.btnSale', function () {
+                var id = $(this).data("id");
+                var price = !isNaN(Number($(this).data("data-price"))) ? Number($(this).data("data-price")) : 0;
+                $('#txtProId').val(id);
+                $('#demoPriceSale').val(price);
+                $('#modal-default').modal('show');
+            });
+
+            $('body').on('click', '.btnLuu', function () {
+                var btn = $(this);
+                var id = $('#txtProId').val();
+                var tt = $('#demoPriceSale').val();
+                $.ajax({
+                    url: '/admin/ProductExpired/IsSale',
+                    type: 'POST',
+                    data: { id: id, discount: tt },
+                    success: function (rs) {
+                        if (rs.success) {
+                            var strChecSale = rs.IsSale ? "Sale " + formatNumber(tt) : "Sale";
+                            $(`#btnSale_${id}`).html(strChecSale);
+
+                        }
+                        $('#modal-default').modal('hide');
+                    }
+                });
+            });
+        });
+
+        function formatNumber(num) {
+            if (num != undefined && num != 'null' && num != '') {
+                let numtemp = roundToNumber(num, '2');
+                if (numtemp != null)
+                    num = numtemp;
+                return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+            }
+            else return '0';
+        }
+        function roundToNumber(num, roundTo) {
+            try {
+                if (roundTo != undefined && parseInt(roundTo) >= 10) {
+                    let roundValue = parseInt(roundTo);
+                    return Math.ceil(num / roundValue) * roundValue;
+                } else if (parseInt(roundTo) < 10) {
+                    return +(Math.ceil(num + "e+" + roundTo) + "e-" + roundTo);
+                }
+            }
+            catch (err) {
+                return null;
+            }
+        }
+
+    </script>
+}

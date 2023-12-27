@@ -1,0 +1,573 @@
+﻿@model TeaShop.Models.EntityFramework.Import
+@{
+    ViewBag.Title = "Thêm mới";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+@section naviheader
+{
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/Admin" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/Admin/import" class="nav-link">Phiếu nhập</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="#" class="nav-link">Thêm mới</a>
+        </li>
+    </ul>
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Thêm mới Phiếu nhập</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/Admin/import">Danh sách Phiếu nhập</a></li>
+                    <li class="breadcrumb-item active">Thêm mới</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Thông tin thêm mới Phiếu nhập</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @using (Html.BeginForm("Add", "Import", FormMethod.Post, new { }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    <div id="StockInMain" class="col-12">
+                        <div id="DetailImport" class="card mb-4" style="display: flex;">
+                            <div class="card-header pb-0">
+                                <div class="d-lg-flex">
+                                    <div class="col-auto my-auto">
+                                        <div id="wa_header_import" class="h-100 ">
+                                            <h6 class="mb-0">Chi tiết phiếu nhập</h6>
+                                            <p class="text-sm mb-0">Ngày giờ nhập không được lớn hơn ngày giờ hiện tại.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body pt-2">
+                                <div class="row px-2 form-3">
+                                    <div class="col-12 col-xl-4 col-md-5 p-1 position-relative">
+                                        <div class="d-flex">
+                                            <div class="input-group flex-nowrap" id="wareSearch">
+                                                <div class="input-group-text input-group-text px-2">
+                                                    <i class="fas fa-search" aria-hidden="true" style="display: block;"></i>
+                                                    <div class="spinner-border spinner-border-sm" style="display: none;"></div>
+                                                </div>
+                                                <input id="searchingProduct" type="text" class="form-control" placeholder="eg .Lọc dữ liệu" autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div id="TableProduct" class="m-0 my-3 mobile-responsive" style="height: 394px; overflow-x: auto;">
+                                            <div id="WaitingProduct" class="waitingdiv text-center position-absolute translate-middle-x start-50" style="display: none;">
+                                                <div class="spinner-border text-primary" role="status">
+                                                    <span class="sr-only">Loading...</span>
+                                                </div>
+                                            </div>
+                                            <table class="table vt-table mb-0" id="dtContentProduct">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="d-none">ID</th>
+                                                        <th style="width:40px;">#</th>
+                                                        <th style="min-width:120px;">Sản phẩm</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="dtContentProductBody">
+                                                    @if (ViewBag.Products != null && ViewBag.Products.Count > 0)
+                                                    {
+                                                        var i = 0;
+                                                        foreach (var item in ViewBag.Products)
+                                                        {
+                                                            <tr class="itemProduct cursor-pointer" role="row" data-id="@item.Id" data-name="@item.Title">
+                                                                <td class="d-none">2</td>
+                                                                <td>@(i + 1)</td>
+                                                                <td>
+                                                                    <a class="text-dark fw-bold buttonEditClass cursor-pointer d-block">@item.ProductCode</a>
+                                                                    <div class="ellipsis_one_line">@item.Title</div>
+                                                                </td>
+                                                            </tr>
+                                                            i++;
+                                                        }
+                                                    }
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-xl-8 col-md-7 p-1">
+                                        <div id="ProductItem" class="card border-1 border-dashed shadow-none rounded-2">
+                                            <div class="card-body pt-2">
+                                                <div class="row">
+                                                    <div class="field col-12 col-md-12 col-sm-12 col-lg-6 px-1 mt-2">
+                                                        <label>Sản phẩm</label>
+                                                        <input id="Product" class="form-control" type="text" maxlength="100" autocomplete="off" placeholder="eg .Sản phẩm" disabled="">
+                                                    </div>
+                                                    <div class="field col-12 col-md-12 col-sm-12 col-lg-3 px-1 mt-2">
+                                                        <label>Số lô</label>
+                                                        <input id="PackageNumber" class="form-control" type="text" maxlength="100" autocomplete="off" placeholder="eg .Số lô">
+                                                    </div>
+                                                    <div class="field col-12 col-md-12 col-sm-12 col-lg-3 px-1 mt-2 ">
+                                                        <label>Ngày hết hạn</label>
+                                                        <input id="ExpiredDay" type="date" name="expiredDate" class="form-control" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="field col-12 col-md-12 col-sm-12 col-lg-6 px-1 mt-2">
+                                                        <label>Nhà cung cấp</label>
+                                                        @Html.DropDownListFor(x => x.Id, ViewBag.Supplier as SelectList, "-Chọn nhà cung cấp-", new { @id = "supplierDetail", @class = "form-control", @placeholder = "NCC" })
+                                                    </div>
+                                                    <div class="field col-12 col-md-12 col-lg-3 col-sm-12 px-1 mt-2">
+                                                        <label>Đơn vị</label>
+                                                        @Html.DropDownListFor(x => x.Id, ViewBag.Unit as SelectList, "-Chọn danh đơn vị-", new { @id = "productUnit", @class = "form-control", @placeholder = "Mô tả đơn vị" })
+                                                    </div>
+                                                    <div class="field col-12 col-md-12 col-lg-3 col-sm-12 px-1 mt-2">
+                                                        <label>Số lượng</label>
+                                                        <input id="numberProduct" class="form-control" type="number" name="numberProduct" placeholder="eg .Số lượng">
+                                                    </div>
+                                                </div>
+                                                <div class="row ">
+                                                    <div class="field col-12 px-1 mt-2 col-md-6 col-lg-6">
+                                                        <label>Đơn giá</label>
+                                                        <input id="Pro_ItemAmount" class="form-control" type="text" placeholder="eg .Đơn giá">
+                                                    </div>
+                                                    <div class="field col-12 px-1 mt-2 col-md-6 col-lg-6">
+                                                        <label>Tổng tiền</label>
+                                                        <input id="Pro_IniAmount" class="form-control" type="text" readonly="readonly" disabled="disabled">
+                                                    </div>
+                                                </div>
+                                                @*<div class="row">
+                                                        <div class="field col-12 mt-2 px-1 ">
+                                                            <label>Ghi chú</label>
+                                                            <textarea id="noteProduct" name="note" type="text" class="form-control" rows="3" placeholder="eg .Ghi chú"></textarea>
+                                                        </div>
+                                                    </div>*@
+                                                <div class="row">
+                                                    <div class="field col-12 mt-2 px-1">
+                                                        <div class="d-flex">
+                                                            <div class="d-flex ms-auto align-items-center">
+                                                                <div class="mt-1 me-1 text-danger text-gradient text-sm font-weight-bold" id="textShowMessage"></div>
+                                                                <button type="button" class="btn btn-sm bg-gradient-primary mt-2 me-0 mb-0" onclick="event.preventDefault();return ItemDetail_Save();">Thêm mới</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="DetailInfo">
+                            <div class="row px-2">
+                                <div class="col-12 col-xl-4 col-md-5 px-1">
+                                    <div id="StockInfo" class="card">
+                                        <div class="card-header pb-0">
+                                            <div class="d-lg-flex">
+                                                <div class="col-auto my-auto flex-grow-1">
+                                                    <div class="h-100 ">
+                                                        <h6 class="mb-0">Chi tiết phiếu</h6>
+                                                    </div>
+                                                    <div>
+                                                        <div class="d-none">
+                                                            <span class="pt-2 text-sm">Chứng từ nhập kho</span>
+                                                            <span id="txtDetailCodeReceipt" class="text-sm ps-2 text-primary fw-bold"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body pt-2">
+                                            <div class="row px-2">
+                                                <div class="field col-12 col-md-12 px-1 mt-2">
+                                                    <label class="title title_collapse" data-tab=""><span>Kho</span></label>
+                                                    <input id="Ware" class="form-control" type="text" maxlength="100" autocomplete="off" value="Kho 1" disabled="">
+                                                </div>
+                                            </div>
+                                            <div class="row px-2 form3">
+                                                <div class="field col-12 col-md-12 px-1 mt-2 ">
+                                                    <div id="import_amount" class="field">
+                                                        <label>Tổng tiền</label>
+                                                        <input id="txtWare_Amount" readonly="readonly" class="form-control" disabled="disabled">
+                                                    </div>
+
+                                                </div>
+                                                <div class="field col-12 col-md-12 px-1 mt-2 ">
+                                                    <label>Ngày nhập</label>
+                                                    <input id="DateImport" type="date" name="deliveryDate" class="form-control" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            @*<div class="row px-2">
+                                                    <div class="field col-12 col-md-12 px-1 mt-2 ">
+                                                        <label>Ghi chú</label>
+                                                        <textarea id="txtWare_Content" name="content" rows="3" type="text" class="form-control"></textarea>
+                                                    </div>
+                                                </div>*@
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="StockProductList" class="col-12 col-xl-8 col-md-7 px-1">
+                                    <div class="card">
+                                        <div class="card-header pb-0">
+                                            <div class="d-lg-flex">
+                                                <div class="col-auto my-auto">
+                                                    <div class="h-100 ">
+                                                        <h6 class="mb-0">Danh sách hàng</h6>
+                                                        <p id="headerStockExport" class="d-none text-sm mb-0">Phiếu xuất kho <span id="stockCodeExportHeader" class="text-primary fw-bold"></span></p>
+                                                        <p id="headerStockOrder" class="d-none text-sm mb-0 text-danger fw-bold">Không thể xoá chứng từ nhập kho được yêu cầu, phải xoá chứng từ yêu cầu <span id="stockCodeOrderHeader"></span></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="TableStockProduct" class="card-body pt-2" style="height: 553px;">
+                                            <div class="m-0 my-0 mobile-responsive h-100 pt-3">
+                                                <div id="" class="waitingdiv text-center" style="display: none;">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="sr-only">Loading...</span>
+                                                    </div>
+                                                </div>
+                                                <table class="table vt-table mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="d-none">ID</th>
+                                                            <th class="d-none">CusID</th>
+                                                            <th style="width:40px;">#</th>
+                                                            <th>Số lô</th>
+                                                            <th>Ngày hết hạn</th>
+                                                            <th style="min-width:150px;">Sản phẩm</th>
+                                                            <th>Đơn vị</th>
+                                                            <th>Số lượng</th>
+                                                            <th>Thành tiền</th>
+                                                            <th style="width:50px;" id="thRemoveProduct"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="StockProductBody">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="fixed-botombutton mt-2">
+                            <div class="action_Save">
+                                <div class="text-danger text-gradient text-sm font-weight-bold" id="textShowMessageMaster"></div>
+                                <div class="action_Save-Content">
+   
+                                    <button id="btnSaveDetail" style="" form="form3" type="button" class="btn bg-gradient-primary mt-2 me-2" onclick="return WareHouse_SaveDetail()">Lưu</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>
+<!-- /.content -->
+
+@section scripts
+{
+    <script>
+        let product_selected = {};
+        let productID = 0;
+        let vtth_range_min = 1, vtth_range_max = 1000000;
+        var dataPro = {}
+        var dataUnit = {}
+        var dataSupp = {}
+        $(document).ready(function () {
+            debugger
+            dataPro = JSON.parse(htmlDecode("@ViewBag.JsonProducts"))
+            dataUnit = JSON.parse(htmlDecode("@ViewBag.JsonUnit"))
+            dataSupp = JSON.parse(htmlDecode("@ViewBag.JsonSupp"))
+
+            dataPro = dataPro.reduce((pre, arr) => { pre[arr.ID] = arr; return pre }, {});
+            dataUnit = dataUnit.reduce((pre, arr) => { pre[arr.ID] = arr; return pre }, {});
+            dataSupp = dataSupp.reduce((pre, arr) => { pre[arr.ID] = arr; return pre }, {});
+
+            $('.auto').autoNumeric('init');
+            $("#dtContentProductBody").on("click", '.itemProduct', function (e) {
+                e.preventDefault();
+                ItemDetail_Refresh();
+                let id = $(this).attr("data-id");
+                let name = $(this).attr("data-name");
+                productID = id;
+                $('#Product').val(name);
+            });
+
+            $("#numberProduct").on("change", function (e) {
+                e.preventDefault();
+
+                let number = Number($("#numberProduct").val());
+                let amount = Number($("#Pro_ItemAmount").val());
+                $('#Pro_IniAmount').val(number * amount);
+            });
+
+            $("#Pro_ItemAmount").on("change", function (e) {
+                e.preventDefault();
+
+                let number = Number($("#numberProduct").val());
+                let amount = Number($("#Pro_ItemAmount").val());
+                $('#Pro_IniAmount').val(number * amount);
+            });
+        });
+
+        function ItemDetail_Refresh() {
+            productID = 0;
+            $('#Product').val("");
+            $('#PackageNumber').val("");
+            //$('#expiredDate').val("");
+            $('#txtWare_Content').val("");
+            $('#numberProduct').val(1);
+            $('#Pro_IniAmount').val(0);
+            $('#Pro_ItemAmount').val(0);
+        }
+
+        function ItemDetail_Save() {
+            document.getElementById("textShowMessage").innerHTML = "";
+            let packageNumber = $('#PackageNumber').val() ? (($('#PackageNumber').val()).replace(/[^a-zA-Z0-9]/g, '')).toLowerCase().trim() : "";
+
+            let supplier = Number($('#supplierDetail').val()) ? Number($('#supplierDetail').val()) : 0;
+            let productDetailUnit = Number($('#productUnit').val()) ? Number($('#productUnit').val()) : 0;
+            let numberProduct = $('#numberProduct').val() ? $('#numberProduct').val() : 0;
+            let Pro_ItemAmount = $('#Pro_ItemAmount').val() ? $('#Pro_ItemAmount').val() : 0;
+            let Pro_IniAmount = $('#Pro_IniAmount').val() ? $('#Pro_IniAmount').val() : 0;
+
+            let noteProduct = $('#noteProduct').val() ? $('#noteProduct').val() : '';
+            let expiredDay = $('#ExpiredDay').val() ? $('#ExpiredDay').val() : '01-01-1900';
+            let DateImport = $('#DateImport').val() ? $('#DateImport').val() : '01-01-1900';
+            let standardUnit = 0;
+            //let standardNumber = 0;
+
+            //#region //Validate
+            let isError = 0;
+            if (!$.isNumeric(numberProduct) || Number(numberProduct) < vtth_range_min || Number(numberProduct) > vtth_range_max) {
+                $('#numberProduct').closest('.field').addClass('error')
+                isError = 1;
+            }
+            else $('#numberProduct').closest('.field').removeClass('error')
+            if (productID == 0) {
+                $('#productDetail').closest('.field').addClass('error')
+                isError = 1;
+            }
+            else $('#productDetail').closest('.field').removeClass('error')
+            if (packageNumber == "") {
+                $('#PackageNumber').closest('.field').addClass('error')
+                isError = 1;
+            }
+            else $('#PackageNumber').closest('.field').removeClass('error')
+            if (productDetailUnit == 0) {
+                $('#productUnit').closest('.field').addClass('error')
+                isError = 1;
+            }
+            else $('#productUnit').closest('.field').removeClass('error')
+            let isProductExist = 0;
+            let keyProductExist = 0;
+            for ([key, value] of Object.entries(product_selected)) {
+                if (value.idProduct == productID) {
+                    isProductExist = 1;
+                    keyProductExist = [key];
+                    //delete product_selected[key];
+                    break;
+                }
+            }
+            //#endregion
+
+            if (isError == 0 && isProductExist == 0) {
+                document.getElementById("textShowMessage").innerHTML = "";
+                document.getElementById("textShowMessageMaster").innerHTML = ""
+                var element = {};
+                element.ProductId = productID;
+                element.PackageNumber = packageNumber;
+                element.Quantity = Number(numberProduct).toString();
+                element.Price = Pro_ItemAmount;
+                element.DateExpired = expiredDay;
+                element.UnitID = productDetailUnit;
+                element.Supplier_Id = supplier ;
+                element.Amount = Pro_IniAmount ;
+                element.DateImport = DateImport;
+
+                product_selected[productID] = element;
+
+                ItemDetail_Render(productID, element, "StockProductBody");
+                WareHouse_UpdateInfo();
+                ItemDetail_Refresh();
+            }
+            else if (isProductExist == 1)
+            {
+                document.getElementById("textShowMessage").innerHTML = "Hàng nhập kho đã được chọn";
+                $('#row_' + keyProductExist).addClass("border-active");
+            }
+            else
+            {
+                document.getElementById("textShowMessage").innerHTML = "Kiểm tra dữ liệu";
+            }
+
+        }
+
+        function WareHouse_UpdateInfo() {
+            let data = [];
+            let TotalAmount = 0;
+            for ([key, value] of Object.entries(product_selected)) {
+                data.push(value);
+                TotalAmount = TotalAmount + Number(value.Amount);
+            }
+
+            $('#txtWare_Amount').val(formatNumber(TotalAmount));
+        }
+
+
+
+
+
+        async function ItemDetail_Render(key, item, id) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    var myNode = document.getElementById(id);
+                    if (myNode != null) {
+
+                        let tr = '<td class="d-none">' + key + '</td>'
+                            + '<td class="order text-center"></td>'
+                            + '<td >'
+                            + ((item.PackageNumber != "") ? '<h6 class="fw-bold mb-0 text-sm  text-uppercase ellipsis_one_line">' + item.PackageNumber + '</h6>' : "")
+                            + '</td>'
+                            + '<td>' + item.DateExpired + '</td>'
+                            + '<td>'
+                            + '<h6 class="mb-0 text-sm ellipsis_one_line text-primary">' + dataPro[Number(item.ProductId)].Name + '</h6>'
+                            + ((dataSupp[Number(item.Supplier_Id)].Name != '') ? '<p class="text-dark text-xs mb-0 mt-0">' + dataSupp[Number(item.Supplier_Id)].Name + '</p>' : '')
+                            + '</td>'
+                            + '<td >' + dataUnit[Number(item.UnitID)].Name + '</td>'
+                            + '<td class="text-center">' + formatNumber(item.Quantity) + '</td>'
+                            + '<td >' + formatNumber(item.Price) + '</td>'
+                            + '<td><button title="Xóa" class="buttonGrid"><i class="buttonDeleteClass fas fa-trash text-danger"></i></button></td>'
+                        tr = '<tr id="row_' + key + '" class="productRow">' + tr + '</tr>'
+                        myNode.insertAdjacentHTML('beforeend', tr);
+                    }
+
+                    $('#StockProductBody').on('click', '.buttonDeleteClass', function (e) {
+                        let idProduct = Number($(this).closest('tr')[0].childNodes[0].innerHTML);
+                        ItemDetail_DeleteRow(idProduct)
+                        e.preventDefault();
+                    });
+                }, 10)
+            })
+        }
+
+        function ItemDetail_DeleteRow(idProduct) {
+            delete product_selected[idProduct];
+            $('#row_' + idProduct).remove();
+            WareHouse_UpdateInfo();
+        }
+        function htmlDecode(input) {
+          var doc = new DOMParser().parseFromString(input, "text/html");
+          return doc.documentElement.textContent;
+        }
+
+        function formatNumber(num) {
+            if (num != undefined && num != 'null' && num != '') {
+                let numtemp = roundToNumber(num, '2');
+                if (numtemp != null)
+                    num = numtemp;
+                return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+            }
+            else return '0';
+        }
+        function roundToNumber(num, roundTo) {
+            try {
+                if (roundTo != undefined && parseInt(roundTo) >= 10) {
+                    let roundValue = parseInt(roundTo);
+                    return Math.ceil(num / roundValue) * roundValue;
+                } else if (parseInt(roundTo) < 10) {
+                    return +(Math.ceil(num + "e+" + roundTo) + "e-" + roundTo);
+                }
+            }
+            catch (err) {
+                return null;
+            }
+        }
+
+        function WareHouse_SaveDetail() {
+            let data = Object.values(product_selected);
+            let dataDetail = [];
+            let totalQuant = 0;
+            for (let i = 0; i < data.length; i++) {
+                let item = data[i];
+                let e = {
+                    ProductId : item.ProductId,
+                    UnitID : item.UnitID,
+                    SupplierID : item.Supplier_Id,
+                    Quantity : item.Quantity,
+                    Price : item.Price,
+                    DateExpired : item.DateExpired,
+                    PackageNumber : item.PackageNumber
+                }
+                totalQuant += Number(item.Quantity);
+                dataDetail.push(e);
+            }
+
+            let dataMaster = {
+                Code: "",
+                WareName: $('#Ware').val(),
+                Quantity: totalQuant,
+                Amount: Number($('#txtWare_Amount').val().replaceAll(',','')),
+                DateImport: $('#DateImport').val(),
+            }
+
+
+            $.ajax({
+	            type: "POST",
+	            url: '@Url.Action("Add", "Import")',
+                data: {
+                    model: dataMaster,
+                    details: dataDetail,
+                    __RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                contentType: 'application/x-www-form-urlencoded',
+                async: true,
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                },
+                success: function (result) {
+                    window.location.href = '@Url.Action("Index", "Import")';
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                complete: function (e) {
+
+                }
+            });
+        }
+    </script>
+}
+
