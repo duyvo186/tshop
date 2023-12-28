@@ -161,9 +161,7 @@ namespace TeaShop.Controllers
                 userEmail = user.Email;
             }
           
-            var code = new { Success = false, Code = -1 };
-            if (ModelState.IsValid)
-            {
+           
                 ShoppingCart cart = (ShoppingCart)Session["Cart"];
                 if (cart != null)
                 {
@@ -171,8 +169,7 @@ namespace TeaShop.Controllers
                     order.CustomerName = req.DeliveryName;
                     order.Phone = req.DeliveryPhoneNumber;
                     order.Address = req.DeliveryAddress;
-                    order.Email = req.Email;
-                    order.UserId = User.Identity.GetUserId();
+                    order.Email = req.DeliveryName;
                     cart.Items.ForEach(x => order.OrderDetails.Add(new OrderDetail
                     {
                         ProductId = x.ProductId,
@@ -183,7 +180,6 @@ namespace TeaShop.Controllers
                     order.TypePayment = req.TypePayment;
                     order.CreatedDate = DateTime.Now;
                     order.ModifiedDate = DateTime.Now;
-                    order.CreatedBy = req.Phone;
                     Random rd = new Random();
                     order.Code = "DH" + rd.Next(0, 9) + rd.Next(0, 9) + rd.Next(0, 9) + rd.Next(0, 9);
                     order.DeliveryDate=req.DeliveryDate;
@@ -255,11 +251,10 @@ namespace TeaShop.Controllers
                     contentAdmin = contentAdmin.Replace("{{TongTien}}", TeaShop.Common.Common.FormatNumber(TongTien, 0));
                     TeaShop.Common.Common.SendMail("TeaShop", "Đơn hàng mới #" + order.Code, contentAdmin.ToString(), ConfigurationManager.AppSettings["EmailAdmin"]);
                     cart.ClearCart();
-                    return RedirectToAction("CheckOutSuccess");
+                   
                 }
-            }
-            return Json(code);
-        }
+             return RedirectToAction("CheckOutSuccess");
+    }
 
         [HttpPost]
         public ActionResult AddToCart(int id, int quantity)
