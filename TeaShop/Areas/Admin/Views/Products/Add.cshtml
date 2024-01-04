@@ -87,6 +87,11 @@
                                         @Html.ValidationMessageFor(x => x.ProductCategoryId, null, new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
+                                        <label for="exampleInputEmail1">Nhà Cung Cấp</label>
+                                        @Html.DropDownListFor(x => x.SupplierID, ViewBag.Supplier as SelectList, "-Chọn danh nhà cung cấp", new { @class = "form-control", @placeholder = "Nhà cung cấp" })
+                                        @Html.ValidationMessageFor(x => x.SupplierID, null, new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
                                         <label for="exampleInputEmail1">Đơn vị</label>
                                         @Html.DropDownListFor(x => x.UnitID, ViewBag.Unit as SelectList, "-Chọn danh đơn vị-", new { @class = "form-control", @placeholder = "Mô tả đơn vị" })
                                         @Html.ValidationMessageFor(x => x.UnitID, null, new { @class = "text-danger" })
@@ -202,7 +207,7 @@
                             </div>
                             <!-- /.tab-content -->
                         </div><!-- /.card-body -->
-                        <div class="form-group" style="margin-left: 1102px;margin-bottom: 16px;margin-top: -21px;">
+                        <div class="form-group" style="margin-left: 50px;margin-bottom: 16px;margin-top: -21px;">
                             <button type="submit" class="btn btn-success">Thêm mới</button>
                         </div>
                     </div><!-- /.card -->

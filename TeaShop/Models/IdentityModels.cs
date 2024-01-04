@@ -51,6 +51,8 @@ namespace TeaShop.Models
         public DbSet<Supplier> Supplier { get; set; }
         public DbSet<Subscribes> Subcribes { get; set; }
 
+        public DbSet<Norifications> Notifications { get; set; }
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();

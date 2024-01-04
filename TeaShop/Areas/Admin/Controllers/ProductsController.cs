@@ -40,6 +40,7 @@ namespace TeaShop.Areas.Admin.Controllers
         public ActionResult Add()
         {
             ViewBag.ProductCategory = new SelectList(db.ProductCategories.ToList(), "Id", "Title");
+            ViewBag.Supplier = new SelectList(db.Supplier.ToList(), "Id", "Name");
             ViewBag.Unit = new SelectList(db.Unit.ToList(), "Id", "Name");
             return View();
         }
@@ -48,6 +49,7 @@ namespace TeaShop.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Add(Product model, List<string> Images, List<int> rDefault)
         {
+
             if (ModelState.IsValid)
             {
                 if (Images != null && Images.Count > 0)
@@ -89,6 +91,7 @@ namespace TeaShop.Areas.Admin.Controllers
             }
             ViewBag.ProductCategory = new SelectList(db.ProductCategories.ToList(), "Id", "Title");
             ViewBag.Unit = new SelectList(db.Unit.ToList(), "Id", "Name");
+            ViewBag.Supplier = new SelectList(db.Supplier.ToList(), "Id", "Name");
             return View(model);
         }
 

@@ -293,6 +293,7 @@
     <Compile Include="Models\EntityFramework\Contact.cs" />
     <Compile Include="Models\EntityFramework\Import.cs" />
     <Compile Include="Models\EntityFramework\ImportDetail.cs" />
+    <Compile Include="Models\EntityFramework\Norifications.cs" />
     <Compile Include="Models\EntityFramework\Supplier.cs" />
     <Compile Include="Models\EntityFramework\Unit.cs" />
     <Compile Include="Models\EntityFramework\News.cs" />
@@ -4139,6 +4140,7 @@
     <Content Include="Areas\Admin\Views\Supplier\Index.cshtml" />
     <Content Include="Areas\Admin\Views\ProductExpired\Index.cshtml" />
     <Content Include="Web.config" />
+    <None Include="Models\EntityFramework\.editorconfig" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

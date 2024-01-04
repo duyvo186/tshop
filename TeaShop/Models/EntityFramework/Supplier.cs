@@ -11,6 +11,10 @@ namespace TeaShop.Models.EntityFramework
     [Table("tb_Supplier")]
     public class Supplier : CommonAbstract
     {
+        public Supplier()
+        {
+            this.Products = new HashSet<Product>();
+        }
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -23,5 +27,7 @@ namespace TeaShop.Models.EntityFramework
         public string Email { get; set; }
         public string Person { get; set; }
         public string Website { get; set; }
+        public ICollection<Product> Products { get; set; }
+
     }
 }

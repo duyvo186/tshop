@@ -90,6 +90,7 @@
                                 <th>Danh mục</th>
                                 <th>Số lượng</th>
                                 <th>Đơn vị</th>
+                                <th>Nhà cung cấp</th>
                                 <th>Giá</th>
                                 <th>Hạn sử dụng</th>
                                 <th>Ngày tạo</th>
@@ -122,6 +123,7 @@
                                         <td>@item.Title</td>
                                         <td>@item.ProductCategory.Title</td>
                                         <td>@item.Quanlity</td>
+                                        <td>@item.Supplier.Name</td>
                                         <td>@item.Unit.Name</td>
                                         <td>@TeaShop.Common.Common.FormatNumber(item.Price, 0)</td>
                                         <td>@(item.DateExpired != null ? item.DateExpired.Value.ToString("dd/MM/yyyy") : "")</td>

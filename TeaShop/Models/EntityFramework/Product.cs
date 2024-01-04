@@ -46,7 +46,8 @@ namespace TeaShop.Models.EntityFramework
         public bool IsFeature { get; set; }
         public bool IsHot { get; set; }
         public bool IsActive { get; set; }
-        public int ProductCategoryId { get; set; }
+        public Int32? SupplierID { get; set; }
+        public Int32? ProductCategoryId { get; set; }
         [Required]
         public DateTime? DateExpired { get; set; } = DateTime.Now;
 
@@ -58,6 +59,8 @@ namespace TeaShop.Models.EntityFramework
         public string SeoKeywords { get; set; }
 
         public virtual ProductCategory ProductCategory { get; set; }
+
+        public virtual Supplier Supplier { get; set; }
         public virtual Unit Unit { get; set; }
         public virtual ICollection<ProductImage> ProductImage { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
