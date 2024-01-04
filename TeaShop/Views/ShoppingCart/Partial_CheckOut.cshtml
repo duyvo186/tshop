@@ -54,27 +54,33 @@
         <label>Email</label>
         <input type="text" name="Email" class="form-control" autocomplete="off" />
     </div>*@
-<div class="form-group">
-    <label>Tên người nhận hàng</label>
-    <input type="text" name="deliveryName" value="@User.Identity.Name" class="form-control" />
-</div>
-<div class="form-group">
-    <label>Địa chỉ nhận hàng</label>
-    <input type="text" name="deliveryAddress" class="form-control" />
-</div>
-<div class="form-group">
-    <label>Số điện thoại nhận hàng</label>
-    <input type="number" name="deliveryPhoneNumber" value="" limit="11" class="form-control" />
-</div>
-<div class="form-group">
-    <label>Ngày giao</label>
-    <input type="date" name="deliveryDate" class="form-control" autocomplete="off" />
-</div>
-<div class="form-group">
-    <label>Giờ</label>
-    <div style="display:flex;">
-        <input type="number" name="deliveryHour" min="0" max="23" value="0" class="form-control" autocomplete="off" style="width: 65px;" />
-        <span style="padding:5px">:</span>
-        <input type="number" name="deliveryMinute" min="0" max="59" value="0" class="form-control" autocomplete="off" style="width: 65px;" />
+@{
+    string authenticatedName = !Request.IsAuthenticated ? "" : @Model.CustomerName;
+    string authenticateAddress = !Request.IsAuthenticated ? "" : @Model.Address;
+    string authenticatedPhone = !Request.IsAuthenticated ? "" : @Model.Phone;
+}
+
+    <div class="form-group">
+        <label>Tên người nhận hàng</label>
+        <input type="text" name="deliveryName" value="@authenticatedName" class="form-control" />
     </div>
-</div>
+    <div class="form-group">
+        <label>Địa chỉ nhận hàng</label>
+        <input type="text" name="deliveryAddress" value="@authenticateAddress" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Số điện thoại nhận hàng</label>
+        <input type="number" name="deliveryPhoneNumber" value="@authenticatedPhone" limit="11" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Ngày giao</label>
+        <input type="date" name="deliveryDate" class="form-control" autocomplete="off" />
+    </div>
+    <div class="form-group">
+        <label>Giờ</label>
+        <div style="display:flex;">
+            <input type="number" name="deliveryHour" min="0" max="23" value="0" class="form-control" autocomplete="off" style="width: 65px;" />
+            <span style="padding:5px">:</span>
+            <input type="number" name="deliveryMinute" min="0" max="59" value="0" class="form-control" autocomplete="off" style="width: 65px;" />
+        </div>
+    </div>

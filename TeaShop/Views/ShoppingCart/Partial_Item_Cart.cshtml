@@ -57,31 +57,22 @@
 <script>
 $(document).ready(function () {
 
-      // Get the table by its ID
     const table = document.getElementById('myTable');
 
-    // Attach 'input' event listener to the table
     table.addEventListener('input', function(event) {
-  // Check if the input that triggered the event is of type 'number'
   if (event.target && event.target.type === 'number') {
-    // Get the product ID from the input's ID attribute
     const productId = event.target.id.split('_')[1];
 
-    // Get the quantity value
     const quantity = parseFloat(event.target.value);
 
-    // Get the price element corresponding to the product ID
       const priceElement = document.getElementById(`Price_${productId}`);
 
 
-      // Get the price element corresponding to the product ID
       const priceDisplayElement = document.getElementById(`Price_Display_${productId}`);
 
-    // Get the initial price value and remove commas if present
     const initialPrice = parseFloat(priceElement.textContent.replace(/,/g, ''));
 
-    // Update the price cell with the new calculated price
-      priceDisplayElement.textContent = (initialPrice * quantity).toLocaleString(); // Add commas back for display
+      priceDisplayElement.textContent = (initialPrice * quantity).toLocaleString();
       Update(productId, quantity);
       function Update(id, quantity) {
           $.ajax({

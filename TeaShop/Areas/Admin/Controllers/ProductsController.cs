@@ -28,7 +28,7 @@ namespace TeaShop.Areas.Admin.Controllers
             }
             if ((numDay ?? 0) != 0)
             {
-                items = items.Where(x => ((x.DateExpired != null && (x.DateExpired.Value.Date - DateTime.Now.Date).TotalDays <= numDay)));
+                items = items.Where(x => ((x.DateExpired != null && (x.DateExpired.Value.Date - DateTime.Now.Date).TotalDays < numDay)));
             }
             var pageIndex = page.HasValue ? Convert.ToInt32(page) : 1;
             items = items.ToPagedList(pageIndex, pageSize);

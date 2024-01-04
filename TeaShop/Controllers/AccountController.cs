@@ -83,7 +83,6 @@ namespace TeaShop.Controllers
                     {
                         Session["UserName"] = model.UserName;
                         return RedirectToLocal(returnUrl);
-                        
                     }
                 case SignInStatus.LockedOut:
                     return View("Lockout");

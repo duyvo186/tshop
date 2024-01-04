@@ -65,67 +65,72 @@
                     }
                 </div>
             </div>
-            <table class="table table-hover">
-                <thead>
-                    <tr style="font-size:20px">
-                        <th><input type="checkbox" id="SelectAll" /></th>
-                        <th>STT</th>
-                        <th>NCC</th>
-                        <th>SDT</th>
-                        <th>Người đại diện</th>
-                        <th>Email</th>
-                        <th>Website</th>
-                        <th>Thông tin tạo</th>
-                        <th>Thông tin sửa</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model != null && Model.Any())
-                    {
-                        var i = ((ViewBag.Page - 1) * ViewBag.PageSize) + 1;
-                        foreach (var item in Model)
-                        {
-                            <tr id="trow_@item.Id">
-                                <td><input type="checkbox" class="cbkItem" value="@item.Id" /></td>
-                                <td>@i</td>
-                                <td>@item.Name</td>
-                                <td>@item.Phone</td>
-                                <td>@item.Person</td>
-                                <td>@item.Email</td>
-                                <td>@item.Website</td>
-                                <td><div><span>@item.CreatedDate.ToString("dd/MM/yyyy")</span></div></td>
-                                <td><div><span>@item.ModifiedDate.ToString("dd/MM/yyyy")</span></div></td>
-                                <td>
-                                    <a href="/admin/Supplier/edit/@item.Id" class="btn btn-sm btn-primary" style="font-size:16px">Sửa</a>
-                                    <a href="#" data-id="@item.Id" class="btn btn-sm btn-danger btnDelete" style="font-size:16px">Xóa</a>
-                                </td>
-                            </tr>
-                            i++;
-                        }
+            <div class="tablewrapper">
 
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="4">Không có bản ghi nào!!!</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <div class="row">
-                <div class="col-6"></div>
-                <div class="col-6" style="text-align:right">
-                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+                <div class="table-responsive">
+                    <table class="table-condensed table-striped" id="table1">
+                        <thead  class="tablehead">
+                            <tr style="font-size:20px">
+                                <th><input type="checkbox" id="SelectAll" /></th>
+                                <th>STT</th>
+                                <th>NCC</th>
+                                <th>SDT</th>
+                                <th>Người đại diện</th>
+                                <th>Email</th>
+                                <th>Website</th>
+                                <th>Thông tin tạo</th>
+                                <th>Thông tin sửa</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody   class="tablebody">
+                            @if (Model != null && Model.Any())
+                            {
+                                var i = ((ViewBag.Page - 1) * ViewBag.PageSize) + 1;
+                                foreach (var item in Model)
+                                {
+                                    <tr id="trow_@item.Id">
+                                        <td><input type="checkbox" class="cbkItem" value="@item.Id" /></td>
+                                        <td>@i</td>
+                                        <td>@item.Name</td>
+                                        <td>@item.Phone</td>
+                                        <td>@item.Person</td>
+                                        <td>@item.Email</td>
+                                        <td>@item.Website</td>
+                                        <td><div><span>@item.CreatedDate.ToString("dd/MM/yyyy")</span></div></td>
+                                        <td><div><span>@item.ModifiedDate.ToString("dd/MM/yyyy")</span></div></td>
+                                        <td>
+                                            <a href="/admin/Supplier/edit/@item.Id" class="btn btn-sm btn-primary" style="font-size:16px">Sửa</a>
+                                            <a href="#" data-id="@item.Id" class="btn btn-sm btn-danger btnDelete" style="font-size:16px">Xóa</a>
+                                        </td>
+                                    </tr>
+                                    i++;
+                                }
+
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4">Không có bản ghi nào!!!</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>
                 </div>
+                    <div class="row">
+                        <div class="col-6"></div>
+                        <div class="col-6" style="text-align:right">
+                            @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                </div>
+                <!-- /.card-footer-->
             </div>
-        </div>
-        <!-- /.card-body -->
-        <div class="card-footer">
-        </div>
-        <!-- /.card-footer-->
-    </div>
-    <!-- /.card -->
+            <!-- /.card -->
 
 </section>
 <!-- /.content -->
@@ -201,5 +206,69 @@
                 }
             });
         });
+        $('table').on('scroll', function () {
+
+            $("#" + this.id + " > *").width($(this).width() + $(this).scrollLeft());
+        });
     </script>
 }
+<style>
+    .table-responsive {
+        min-height: .01%;
+        overflow-x: auto;
+    }
+
+    table.table-condensed.table-striped {
+        border-collapse: collapse;
+        width: 1200px;
+        overflow-x: scroll;
+        /*display: block;*/
+    }
+
+    .table-condensed.table-striped thead, .table-condensed.table-striped tbody {
+        display: block;
+    }
+
+    .table-condensed.table-striped tbody {
+        overflow-y: scroll;
+        overflow-x: hidden;
+        height: 420px;
+    }
+
+    .table > thead > tr > th {
+        vertical-align: bottom;
+    }
+
+    .table-condensed.table-striped td, .table-condensed.table-striped th {
+        min-width: 150px;
+        height: 25px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 150px;
+    }
+
+    .tablehead {
+    }
+
+    .table-condensed > thead.tablehead > tr > th {
+        padding: 20px 10px 20px 20px;
+        text-transform: uppercase;
+    }
+
+    .table-condensed > tbody.tablebody > tr > td {
+        padding: 15px 10px 15px 20px;
+        text-transform: capitalize;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(even) {
+        min-width: 100%;
+        display: inline-block;
+        border-bottom: 2px solid #fff;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(odd) {
+        min-width: 100%;
+        display: inline-block;
+        border-bottom: 2px solid #fff;
+    }
+</style>

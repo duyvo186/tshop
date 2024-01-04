@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Logging;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity.Migrations;
+using System.Data.Entity.Validation;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -71,7 +75,8 @@ namespace TeaShop.Controllers
                 ViewBag.CheckCart = cart1;
                 
             }
-            return View();
+            var user = db.Users.Find(User.Identity.GetUserId());
+            return View(user);
         }
 
         public ActionResult CheckOutSuccess()
@@ -160,16 +165,16 @@ namespace TeaShop.Controllers
                 }
                 userEmail = user.Email;
             }
-          
-           
-                ShoppingCart cart = (ShoppingCart)Session["Cart"];
+            userEmail = req.DeliveryName;
+
+                  ShoppingCart cart = (ShoppingCart)Session["Cart"];
                 if (cart != null)
                 {
                     Order order = new Order();
-                    order.CustomerName = req.DeliveryName;
+                    order.CustomerName = userEmail;
                     order.Phone = req.DeliveryPhoneNumber;
                     order.Address = req.DeliveryAddress;
-                    order.Email = req.DeliveryName;
+                    order.Email = userEmail;
                     cart.Items.ForEach(x => order.OrderDetails.Add(new OrderDetail
                     {
                         ProductId = x.ProductId,
@@ -214,9 +219,35 @@ namespace TeaShop.Controllers
                     var TongTien = decimal.Zero;
                     foreach (var sp in cart.Items)
                     {
-                        strSanPham += "<tr>";
+                        var item = db.Products.Find(sp.ProductId);
+                        int a = item.Quanlity - sp.Quantity;
+                    try
+                    {
+                        if (item != null)
+                        {
+                            item.Quanlity = a;
+                            item.DateExpired = DateTime.Now;
+                            db.SaveChanges();
+                        }
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        // Log validation errors
+                        foreach (var validationErrors in ex.EntityValidationErrors)
+                        {
+                            foreach (var validationError in validationErrors.ValidationErrors)
+                            {
+                                var ok = validationError.PropertyName;
+                                var hey = validationError.ErrorMessage;
+                                Console.WriteLine($"Property: {validationError.PropertyName} Error: {validationError.ErrorMessage}");
+                            }
+                        }
+                    }
+
+
+                    strSanPham += "<tr>";
                         strSanPham += "<td>" + sp.ProductName + "</td>";
-                        strSanPham += "<td>" + sp.Quantity + "</td>";
+                        strSanPham += "<td>" + item.Quanlity + "</td>";
                         strSanPham += "<td>" + TeaShop.Common.Common.FormatNumber(sp.TotalPrice, 0) + "</td>";
                         strSanPham += "</tr>";
                         thanhtien += sp.Price * sp.Quantity;
@@ -228,23 +259,20 @@ namespace TeaShop.Controllers
                     contentCustomer = contentCustomer.Replace("{{NgayDat}}", DateTime.Now.ToString("dd/MM/yyyy"));
                     contentCustomer = contentCustomer.Replace("{{TenKhachHang}}", order.CustomerName);
                     contentCustomer = contentCustomer.Replace("{{Phone}}", order.Phone);
-                    contentCustomer = contentCustomer.Replace("{{Email}}", req.Email);
+                    contentCustomer = contentCustomer.Replace("{{Email}}", userEmail);
                     contentCustomer = contentCustomer.Replace("{{DiaChiNhanHang}}", order.Address); 
                     contentCustomer = contentCustomer.Replace("{{ThoiGianNhanHang}}", order.DeliveryDate.Value.ToString("dd/MM/yyy") + " " + order.DeliveryHour + ":" + order.DeliveryMinute);
                     contentCustomer = contentCustomer.Replace("{{ThanhTien}}", TeaShop.Common.Common.FormatNumber(thanhtien, 0));
                     contentCustomer = contentCustomer.Replace("{{TongTien}}", TeaShop.Common.Common.FormatNumber(TongTien, 0));
-                    TeaShop.Common.Common.SendMail("TeaShop", "Đơn hàng #" + order.Code, contentCustomer.ToString(), req.Email);
-
-                    string contentCofirm = System.IO.File.ReadAllText(Server.MapPath("~/Views/Account/ConfirmEmail.cshtml"));
-                    TeaShop.Common.Common.SendMail("TeaShop", "Xác nhận email" + userEmail, contentCofirm.ToString(), req.Email);
+                    TeaShop.Common.Common.SendMail("TeaShop", "Đơn hàng #" + order.Code, contentCustomer.ToString(), userEmail);
 
                     string contentAdmin = System.IO.File.ReadAllText(Server.MapPath("~/Content/templates/send1.html"));
                     contentAdmin = contentAdmin.Replace("{{MaDon}}", order.Code);
-                    contentAdmin = contentAdmin.Replace("{{SanPham}}", strSanPham);
+                    contentAdmin = contentAdmin.Replace("{{SanPham}}", strSanPham); 
                     contentAdmin = contentAdmin.Replace("{{NgayDat}}", DateTime.Now.ToString("dd/MM/yyyy"));
                     contentAdmin = contentAdmin.Replace("{{TenKhachHang}}", order.CustomerName);
                     contentAdmin = contentAdmin.Replace("{{Phone}}", order.Phone);
-                    contentAdmin = contentAdmin.Replace("{{Email}}", req.Email);
+                    contentAdmin = contentAdmin.Replace("{{Email}}", req.DeliveryName);
                     contentAdmin = contentAdmin.Replace("{{DiaChiNhanHang}}", order.Address);
                     contentAdmin = contentAdmin.Replace("{{ThoiGianNhanHang}}", order.DeliveryDate.Value.ToString("dd/MM/yyy") + " " + order.DeliveryHour + ":" + order.DeliveryMinute);
                     contentAdmin = contentAdmin.Replace("{{ThanhTien}}", TeaShop.Common.Common.FormatNumber(thanhtien, 0));

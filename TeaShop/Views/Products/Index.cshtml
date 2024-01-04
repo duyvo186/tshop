@@ -101,7 +101,7 @@
                                         }
                                         <div class="product-item @item.ProductCategory.Alias">
                                             <div class="product discount product_filter">
-                                                <div class="product_image" >
+                                                <div class="product_image">
                                                     <img src="@strImge" alt="@item.Title" style="height:265px;">
                                                 </div>
                                                 <div class="favorite favorite_left"></div>
@@ -109,21 +109,57 @@
                                                 {
                                                     <div class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center"><span>sale</span></div>
                                                 }
-                                            <div class="product_info">
-                                                <h6 class="product_name" style="margin-top:18px;"><a href="/chi-tiet/@item.Alias-p@(item.Id)">@item.Title</a></h6>
-                                                @if (item.PriceSale > 0)
-                                                {
-                                                    <div class="product_price">@TeaShop.Common.Common.FormatNumber(item.PriceSale, 0)<span>@TeaShop.Common.Common.FormatNumber(item.Price, 0)</span></div>
-                                                    <div style="display:none;" class="in_product_price"> @item.PriceSale</div>
-                                                }
-                                                else
-                                                {
-                                                    <div class="product_price">@TeaShop.Common.Common.FormatNumber(item.Price, 0)</div>
-                                                    <div style="display:none;" class="in_product_price"> @item.Price</div>
-                                                }
+                                                <div class="product_info">
+                                                    <h6 class="product_name" style="margin-top:18px;"><a href="/chi-tiet/@item.Alias-p@(item.Id)">@item.Title</a></h6>
+                                                    @if (item.PriceSale > 0)
+                                                    {
+                                                        <div class="product_price">@TeaShop.Common.Common.FormatNumber(item.PriceSale, 0)<span>@TeaShop.Common.Common.FormatNumber(item.Price, 0)</span></div>
+                                                        <div style="display:none;" class="in_product_price"> @item.PriceSale</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="product_price">@TeaShop.Common.Common.FormatNumber(item.Price, 0)</div>
+                                                        <div style="display:none;" class="in_product_price"> @item.Price</div>
+                                                    }
+                                                </div>
+                                                <div style="text-align:center" class="inventory-number">
+                                                    @if (item.Quanlity < 0 || item.Quanlity == 0)
+                                                    {
+                                                        <p style="color:red">Hết hàng</p>
+                                                    }
+                                                    else
+                                                    {
+                                                        <p>Còn hàng</p>
+                                                    }
+                                                </div>
                                             </div>
+                                            @if (item.Quanlity < 0 || item.Quanlity == 0)
+                                            {
+                                                <div class="red_button add_to_cart_button"><a type="button" style="padding: 0 20px; font-size:13px; background-color:darkgray; color:black" class="none-add" data-id="@item.Id" data-toggle="modal" data-target="#exampleModal">Thêm vào giỏ hàng</a></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="red_button add_to_cart_button"><a href="#" style="padding: 0 20px; font-size:13px;" class="btnAddToCart" data-id="@item.Id">Thêm vào giỏ hàng</a></div>
+                                            }
+                                        </div>
+
+                                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Không thêm được vào giỏ hàng</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Sản phẩm này đã hết hàng vui lòng chọn sản phẩm khác !
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="red_button add_to_cart_button"><a href="#" class="btnAddToCart" data-id="@item.Id">Thêm vào giỏ hàng</a></div>
                                         </div>
                                     }
                                 }

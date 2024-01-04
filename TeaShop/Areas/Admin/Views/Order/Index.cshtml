@@ -44,49 +44,55 @@
 
         </div>
         <div class="card-body">
-            <table class="table table-bordered">
-                <thead>
-                    <tr style="font-size:20px">
-                        <th>#</th>
-                        <th>Mã đơn hàng</th>
-                        <th>Tên khách hàng</th>
-                        <th>Số điện thoại</th>
-                        <th>Tiền</th>
-                        <th>Trạng thái</th>
-                        <th>Ngày tạo</th>
-                        <th style="width:115px; text-align:center">Ngày giao hàng</th>
-                        <th style="width:115px; text-align:center">Thời gian giao hàng</th>
-                        <th></th>
-                    </tr>
-                </thead>
+            <div class="tablewrapper">
 
-                <tbody>
-                    @if (Model != null && Model.Any())
-                    {
-                        var i = ((ViewBag.Page - 1) * ViewBag.PageSize) + 1;
-                        foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>@i</td>
-                                <td>@item.Code</td>
-                                <td>@item.CustomerName</td>
-                                <td>@item.Phone</td>
-                                <td>@TeaShop.Common.Common.FormatNumber(item.TotalAmount, 0)</td>
-                                <td>@(@item.TypePayment == 1?"Chờ thanh toán":"Đã thanh toán")</td>
-                                <td>@item.CreatedDate.ToString("dd/MM/yyyy")</td>
-                                <td>@(item.DeliveryDate != null ? item.DeliveryDate.Value.ToString("dd/MM/yyyy") : "")</td>
-
-                                <td>@(item.DeliveryHour!=null?( item.DeliveryHour +" : " + item.DeliveryMinute):"")</td>
-                                <td>
-                                    <a href="/admin/order/view/@item.Id" class="btn btn-sm btn-success" style="font-size:16px">Xem</a>
-                                    <a href="#" class="btn btn-sm btn-danger btnCapnhat" data-id="@item.Id" style="font-size:16px">Cập nhật</a>
-                                </td>
+                <div class="table-responsive">
+                    <table class="table-condensed table-striped" id="table1">
+                        <thead class="tablehead">
+                            <tr style="font-size:20px">
+                                <th>#</th>
+                                <th>Mã đơn hàng</th>
+                                <th>Tên khách hàng</th>
+                                <th>Số điện thoại</th>
+                                <th>Tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày tạo</th>
+                                <th>Ngày giao hàng</th>
+                                <th>Thời gian giao hàng</th>
+                                <th></th>
                             </tr>
-                            i++;
-                        }
-                    }
-                </tbody>
-            </table>
+                        </thead>
+
+                        <tbody  class="tablebody">
+                            @if (Model != null && Model.Any())
+                            {
+                                var i = ((ViewBag.Page - 1) * ViewBag.PageSize) + 1;
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@item.Code</td>
+                                        <td>@item.CustomerName</td>
+                                        <td>@item.Phone</td>
+                                        <td>@TeaShop.Common.Common.FormatNumber(item.TotalAmount, 0)</td>
+                                        <td>@(@item.TypePayment == 1?"Chờ thanh toán":"Đã thanh toán")</td>
+                                        <td>@item.CreatedDate.ToString("dd/MM/yyyy")</td>
+                                        <td>@(item.DeliveryDate != null ? item.DeliveryDate.Value.ToString("dd/MM/yyyy") : "")</td>
+
+                                        <td>@(item.DeliveryHour!=null?( item.DeliveryHour +" : " + item.DeliveryMinute):"")</td>
+                                        <td>
+                                            <a href="/admin/order/view/@item.Id" class="btn btn-sm btn-success" style="font-size:16px">Xem</a>
+                                            <a href="#" class="btn btn-sm btn-danger btnCapnhat" data-id="@item.Id" style="font-size:16px">Cập nhật</a>
+                                        </td>
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
             <div class="row">
                 <div class="col-6"></div>
                 <div class="col-6" style="text-align:right">
@@ -94,12 +100,12 @@
                 </div>
             </div>
         </div>
-        <!-- /.card-body -->
-        <div class="card-footer">
-        </div>
-        <!-- /.card-footer-->
-    </div>
-    <!-- /.card -->
+                <!-- /.card-body -->
+                <div class="card-footer">
+                </div>
+                <!-- /.card-footer-->
+            </div>
+            <!-- /.card -->
 
 </section>
 <!-- /.content -->
@@ -156,5 +162,71 @@
                 });
             });
         });
+        $('table').on('scroll', function () {
+
+            $("#" + this.id + " > *").width($(this).width() + $(this).scrollLeft());
+        });
     </script>
 }
+<style>
+    .table-responsive {
+        min-height: .01%;
+        overflow-x: auto;
+    }
+
+    table.table-condensed.table-striped {
+        border-collapse: collapse;
+        width: 1200px;
+        overflow-x: scroll;
+        /*display: block;*/
+    }
+
+    .table-condensed.table-striped thead, .table-condensed.table-striped tbody {
+        display: block;
+    }
+
+    .table-condensed.table-striped tbody {
+        overflow-y: scroll;
+        overflow-x: hidden;
+        height: 420px;
+    }
+
+    .table > thead > tr > th {
+        vertical-align: bottom;
+    }
+
+    .table-condensed.table-striped td, .table-condensed.table-striped th {
+        min-width: 150px;
+        height: 25px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 150px;
+    }
+
+    .tablehead {
+    }
+
+    .table-condensed > thead.tablehead > tr > th {
+        padding: 20px 10px 20px 20px;
+        text-transform: uppercase;
+    }
+
+    .table-condensed > tbody.tablebody > tr > td {
+        padding: 15px 10px 15px 20px;
+        text-transform: capitalize;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(even) {
+        min-width: 100%;
+        display: inline-block;
+        border-bottom: 2px solid #fff;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(odd) {
+        min-width: 100%;
+        display: inline-block;
+        border-bottom: 2px solid #fff;
+    }
+
+
+</style>
